@@ -39,7 +39,7 @@ export async function createSubmission(data: FormSubmissionData) {
     return {
       success: true,
       data: submission,
-      message: 'Your estimate request has been submitted successfully!'
+      message: "Your estimate request has been submitted successfully! We'll get back to you soon."
     };
   } catch (error: any) {
     console.error('Error creating submission in repository:', error);
