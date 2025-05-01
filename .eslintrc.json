@@ -1,0 +1,7 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "newline-before-return": "off",
+    "import/no-duplicates": "off"
+  }
+}

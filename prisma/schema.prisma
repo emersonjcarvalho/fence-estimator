@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  
+  // The DATABASE_URL can be constructed from individual components
+  // See the constructor function in src/lib/prisma/client.ts
+}
+
+// Model for estimator submissions
+model FenceEstimates {
+  id              Int       @id @default(autoincrement())
+  // Contact information
+  full_name       String
+  email           String
+  phone           String
+  address         String
+  zip_code        String?
+  
+  // Project details
+  property_type   String
+  service_type    String
+  materials       String[]  // Array of materials
+  project_details String    @db.Text
+  
+  // Timestamps
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  @@map("fence_estimator")
+}

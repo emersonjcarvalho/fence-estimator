@@ -1,0 +1,138 @@
+"use server";
+
+import { prisma } from '@/lib/prisma/client';
+import { FormSubmissionData } from '@/lib/supabase/client';
+import { PrismaFallback } from '@/lib/prisma/fallback';
+import { submitFormToSupabase } from '@/lib/supabase/client';
+
+/**
+ * Server action to create a new submission in the database
+ */
+export async function createSubmission(data: FormSubmissionData) {
+  // Check if Prisma is configured, otherwise use fallback
+  if (!prisma || !process.env.DATABASE_URL) {
+    console.warn('Prisma is not configured. Using Supabase fallback.');
+    return submitFormToSupabase(data);
+  }
+  
+  try {
+    // Log for debugging
+    console.log('Creating submission in Prisma repository:', data);
+    
+    const submission = await prisma.fenceEstimates.create({
+      data: {
+        // Contact information
+        full_name: data.full_name,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+        zip_code: data.zip_code || '',
+        
+        // Project details
+        property_type: data.property_type,
+        service_type: data.service_type,
+        materials: data.materials,
+        project_details: data.project_details,
+      },
+    });
+    
+    return {
+      success: true,
+      data: submission,
+      message: 'Your estimate request has been submitted successfully!'
+    };
+  } catch (error: any) {
+    console.error('Error creating submission in repository:', error);
+    
+    // Check if this might be a configuration error
+    if (error.message?.includes('P1000') || 
+        error.message?.includes('P1001') || 
+        error.message?.includes('P1003') || 
+        error.message?.includes('connect')) {
+      
+      console.warn('Prisma connection error, falling back to Supabase direct API');
+      return submitFormToSupabase(data);
+    }
+    
+    return {
+      success: false,
+      error,
+      message: `Database error: ${error.message || 'Unknown error'}`
+    };
+  }
+}
+
+/**
+ * Server action to get all submissions
+ */
+export async function getAllSubmissions() {
+  // Check if Prisma is configured
+  if (!prisma || !process.env.DATABASE_URL) {
+    console.warn('Prisma is not configured. Cannot fetch submissions.');
+    return {
+      success: false,
+      message: 'Database is not properly configured'
+    };
+  }
+  
+  try {
+    const submissions = await prisma.fenceEstimates.findMany({
+      orderBy: {
+        created_at: 'desc'
+      }
+    });
+    
+    return {
+      success: true,
+      data: submissions
+    };
+  } catch (error: any) {
+    console.error('Error fetching submissions:', error);
+    
+    return {
+      success: false,
+      error,
+      message: `Failed to fetch submissions: ${error.message}`
+    };
+  }
+}
+
+/**
+ * Server action to get a submission by ID
+ */
+export async function getSubmissionById(id: number) {
+  // Check if Prisma is configured
+  if (!prisma || !process.env.DATABASE_URL) {
+    console.warn('Prisma is not configured. Cannot fetch submission.');
+    return {
+      success: false,
+      message: 'Database is not properly configured'
+    };
+  }
+  
+  try {
+    const submission = await prisma.fenceEstimates.findUnique({
+      where: { id }
+    });
+    
+    if (!submission) {
+      return {
+        success: false,
+        message: 'Submission not found'
+      };
+    }
+    
+    return {
+      success: true,
+      data: submission
+    };
+  } catch (error: any) {
+    console.error(`Error fetching submission with ID ${id}:`, error);
+    
+    return {
+      success: false,
+      error,
+      message: `Failed to fetch submission: ${error.message}`
+    };
+  }
+}
