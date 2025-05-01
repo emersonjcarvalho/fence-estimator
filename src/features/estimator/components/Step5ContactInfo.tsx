@@ -89,8 +89,8 @@ export function Step5ContactInfo({ onSubmit, isSubmitting }: { onSubmit?: () => 
 
   const isLastStepValue = isLastStep();
   const buttonText = isLastStepValue ? (isSubmitting ? "Submitting..." : "Submit") : "Next";
-  const title = "Contact Information";
-  const characterSpeech = "Final step - just need your contact info!";
+  const title = "We’ll review your details and get back to you soon.";
+  const characterSpeech = "";
 
   return (
     <FormLayout 

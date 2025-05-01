@@ -30,9 +30,9 @@ export function FormLayout({
         {/* Logo */}
         <div className="mb-6 flex justify-between items-center">
           <div className="text-blue-600 font-bold text-2xl">
-            HomeBuddy<span className="text-orange-400">.</span>
+            <strong>1<sup>st</sup></strong> Ranked Fence<span className="text-orange-400">.</span>
             <div className="text-xs font-normal text-blue-600 uppercase">
-              FOR HOMEOWNERS
+              Strong and Secure Fences in South Florida
             </div>
           </div>
           <button className="text-gray-400">

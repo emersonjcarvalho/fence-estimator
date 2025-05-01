@@ -19,8 +19,8 @@ export function Step4ProjectDetails() {
   return (
     <FormLayout 
       title="Any other details you'd like to share about the project?"
-      subtitle="This step is optional, but helps us give you a more accurate estimate"
-      characterSpeech="Feel free to tell us more about what you're looking for or any special requirements."
+      subtitle="Optional"
+      characterSpeech=""
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

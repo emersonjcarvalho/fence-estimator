@@ -28,7 +28,7 @@ export function Step2ServiceType() {
   return (
     <FormLayout 
       title="Which type of service do you need?"
-      characterSpeech="Let's find out what we can help you with today."
+      characterSpeech=""
     >
       <div className="space-y-4">
         <button

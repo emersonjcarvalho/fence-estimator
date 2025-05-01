@@ -28,7 +28,7 @@ export function Step1PropertyType() {
   return (
     <FormLayout 
       title="What is the property type?"
-      characterSpeech="Let's start by understanding what type of property you have."
+      characterSpeech=""
       showBackButton={false}
     >
       <div className="space-y-4">

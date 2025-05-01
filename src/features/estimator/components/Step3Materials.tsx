@@ -49,7 +49,7 @@ export function Step3Materials() {
     <FormLayout 
       title="What type of materials are you interested in?"
       subtitle="Select all that apply"
-      characterSpeech="Different materials have different benefits and costs."
+      characterSpeech=""
     >
       <div className="space-y-4">
         {materials.map((material) => (
