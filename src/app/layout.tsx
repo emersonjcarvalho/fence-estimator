@@ -9,8 +9,8 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { EnvInitializer } from '@/components/env-initializer';
 
 export const metadata: Metadata = {
-    title: 'HomeBuddy - Walk-in Shower Estimator',
-    description: 'Get an instant estimate for your walk-in shower installation project',
+    title: '1st Ranked Fence | Instant Estimate',
+    description: 'Get a quick estimate for your fence project with our easy-to-use form.',
     icons: {
         icon: '/favicon.ico',
     },
