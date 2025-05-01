@@ -6,7 +6,7 @@
     "license": "MIT",
     "scripts": {
         "dev": "next dev --turbopack",
-        "build": "next build",
+        "build": "node prisma/fix-prisma-vercel.mjs && next build",
         "start": "next start",
         "prod-dev": "cross-env NODE_ENV=production next dev --turbopack",
         "start-prod": "node start-prod.js",
@@ -15,11 +15,13 @@
         "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
         "setup": "node setup-database.js",
         "update-db": "node prisma/update-db.js",
-        "prisma:generate": "node scripts/run-prisma.js generate",
-        "prisma:push": "node scripts/run-prisma.js db push",
-        "prisma:pull": "node scripts/run-prisma.js db pull",
-        "prisma:studio": "node scripts/run-prisma.js studio",
-        "prisma:migrate": "node scripts/run-prisma.js migrate dev"
+        "prisma:generate": "npx prisma generate",
+        "prisma:push": "npx prisma db push",
+        "prisma:pull": "npx prisma db pull",
+        "prisma:studio": "npx prisma studio",
+        "prisma:migrate": "npx prisma migrate dev",
+        "vercel-build": "node prisma/fix-prisma-vercel.mjs && next build",
+        "postinstall": "node prisma/fix-prisma-vercel.mjs || npx prisma generate"
     },
     "dependencies": {
         "@hookform/resolvers": "^5.0.1",

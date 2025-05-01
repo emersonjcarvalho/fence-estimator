@@ -1,0 +1,5 @@
+{
+  "buildCommand": "node prisma/fix-prisma-vercel.mjs && next build",
+  "installCommand": "npm install",
+  "framework": "nextjs"
+}

@@ -11,6 +11,7 @@ A multi-step interactive web form for home services estimation, specifically for
 - **Form State Management**: Complete state management with back/forward navigation
 - **Prisma ORM Integration**: Type-safe database access with Prisma ORM
 - **Admin Dashboard**: Simple dashboard to view form submissions
+- **Vercel Deployment Ready**: Configured for seamless deployment to Vercel
 
 ## 🏁 Getting Started
 
@@ -202,6 +203,19 @@ If you're having problems with the database connection:
 3. **Fallback Mode**:
    - The application will automatically fall back to direct Supabase API calls if Prisma is not configured
    - Check the browser console for warnings about fallback mode
+
+### Deployment Issues on Vercel
+
+If you encounter issues with Prisma on Vercel deployment:
+
+1. **Prisma Not Generated Error**:
+   - This project is configured to generate Prisma during build using the `postinstall` and `vercel-build` scripts
+   - Make sure your `vercel.json` file is properly set with the `buildCommand` set to `npm run vercel-build`
+   - Ensure you've set the `DATABASE_URL` environment variable in your Vercel project settings
+
+2. **Database Connection Issues**:
+   - For Supabase, make sure to include both `DATABASE_URL` and `DIRECT_URL` in your Vercel environment variables
+   - Verify that your database allows connections from Vercel's IP range
 
 ---
 

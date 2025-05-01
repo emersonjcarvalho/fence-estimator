@@ -6,6 +6,9 @@
  * 2. Constructs DATABASE_URL from component variables if needed
  * 3. Sets the DATABASE_URL environment variable for the child process
  * 4. Runs the specified Prisma command
+ * 
+ * Special handling for Vercel environment is included to ensure
+ * Prisma commands run correctly during deployment.
  */
 
 const { spawnSync } = require('child_process');
@@ -88,9 +91,41 @@ function constructDatabaseUrl(config) {
   return url;
 }
 
+// Detect if we're running in Vercel environment
+function isVercelEnvironment() {
+  return process.env.VERCEL === '1' || process.env.VERCEL_ENV !== undefined;
+}
+
 // Run Prisma command with DATABASE_URL
 function runPrismaCommand(command, args = []) {
-  // Load env variables
+  // Special handling for Vercel environment
+  if (isVercelEnvironment()) {
+    console.log('Detected Vercel environment, using direct environment variables');
+    
+    // In Vercel, just use the environment variables already set
+    console.log(`Running prisma ${command} ${args.join(' ')} in Vercel environment`);
+    
+    // Use npx directly in Vercel
+    const npxCmd = 'npx';
+    
+    // Run the command using environment variables provided by Vercel
+    const result = spawnSync(npxCmd, ['prisma', command, ...args], {
+      stdio: 'inherit'
+    });
+    
+    if (result.error || (result.status !== 0)) {
+      console.error(`Error running prisma ${command} in Vercel environment`);
+      if (result.error) {
+        console.error(result.error.message);
+      }
+      process.exit(result.status || 1);
+    }
+    
+    console.log(`Vercel Prisma command completed successfully`);
+    return;
+  }
+  
+  // Load env variables (for non-Vercel environments)
   const config = loadEnvVariables();
   
   // Get DATABASE_URL (from direct config or components)
@@ -107,7 +142,9 @@ function runPrismaCommand(command, args = []) {
     process.exit(1);
   }
   
-  console.log(`Using DATABASE_URL: ${databaseUrl.replace(/:[^:@]+@/, ':****@')}`);
+  // Mask password in logs
+  const maskedUrl = databaseUrl.replace(/:[^:@]+@/, ':****@');
+  console.log(`Using DATABASE_URL: ${maskedUrl}`);
   
   // Create a copy of the current environment with our DATABASE_URL
   const env = { ...process.env, DATABASE_URL: databaseUrl };
