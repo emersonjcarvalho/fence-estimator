@@ -13,6 +13,7 @@ import { handleFormSubmission } from '../services/formSubmissionService';
 import { FeedbackMessage } from './FeedbackMessage';
 import { SubmissionFallback } from './SubmissionFallback';
 import { supabase } from '@/lib/supabase/client';
+import { trackFormSubmission } from '@/lib/analytics';
 
 export function EstimatorForm() {
   const { formState, resetForm, isLastStep } = useEstimator();
@@ -56,8 +57,17 @@ export function EstimatorForm() {
     
     setIsSubmitting(true);
     try {
-      // Submit to Supabase
+      // Submit to database
       const result = await handleFormSubmission(formState);
+      
+      // Track form submission in Google Analytics
+      trackFormSubmission(result.success, {
+        form_type: 'fence_estimator',
+        property_type: formState.propertyType,
+        service_type: formState.serviceType,
+        materials_count: formState.materials.length,
+        ...(result.success ? {} : { error_message: result.message }),
+      });
       
       // Set feedback based on the result
       setFeedback({
@@ -86,6 +96,13 @@ export function EstimatorForm() {
       if (process.env.NODE_ENV === 'development') {
         errorMessage += ` Developer info: ${error.message || 'Unknown error'}`;
       }
+      
+      // Track form submission error in analytics
+      trackFormSubmission(false, {
+        form_type: 'fence_estimator',
+        error_message: error.message || 'Unknown error',
+        error_type: 'exception'
+      });
       
       setFeedback({
         type: 'error',
