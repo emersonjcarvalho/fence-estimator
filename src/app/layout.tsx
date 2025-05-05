@@ -7,6 +7,8 @@ import { GeistMono } from 'geist/font/mono';
 import { Analytics } from '@/components/analytics';
 import { ThemeProvider } from '@/components/theme-provider';
 import { EnvInitializer } from '@/components/env-initializer';
+import { GoogleAnalytics } from '@next/third-parties/google';
+import { AnalyticsProvider } from '@/lib/analytics';
 
 export const metadata: Metadata = {
     title: '1st Ranked Fence | Instant Estimate',
@@ -25,6 +27,9 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+    // Get the measurement ID from environment variables
+    const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+    
     return (
         <html lang="en" suppressHydrationWarning>
             <body
@@ -37,8 +42,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     disableTransitionOnChange
                 >
                     <EnvInitializer />
-                    {children}
-                    <Analytics />
+                    <AnalyticsProvider>
+                        {children}
+                    </AnalyticsProvider>
+                    
+                    {/* Use the environment variable for the Google Analytics ID */}
+                    <GoogleAnalytics gaId={measurementId as string} />
                 </ThemeProvider>
             </body>
         </html>

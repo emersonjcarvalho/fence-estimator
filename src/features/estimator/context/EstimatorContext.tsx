@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import { getStepOrder, StepId } from '../config/stepsConfig';
 import { getSchemaForStep } from '../schemas/validationSchema';
 import { z } from 'zod';
+import { trackFormStep, trackVirtualPageView } from '@/lib/analytics';
 
 // Define types for our form state
 export type PropertyType = 
@@ -174,6 +175,23 @@ export function EstimatorProvider({ children }: { children: ReactNode }) {
       setCurrentStepId(stepOrder[safeCurrentStep]);
     }
   }, [formState.currentStep, stepOrder]);
+
+  // Track step views for analytics
+  useEffect(() => {
+    if (currentStepId && stepOrder.length > 0) {
+      // Track the step view in Google Analytics
+      trackFormStep(
+        currentStepId,
+        formState.currentStep + 1 // Make step number 1-based for better readability
+      );
+      
+      // Also track as a virtual page view
+      trackVirtualPageView(
+        `/form/step/${formState.currentStep + 1}/${currentStepId}`,
+        `Fence Estimator - Step ${formState.currentStep + 1}: ${currentStepId}`
+      );
+    }
+  }, [currentStepId, formState.currentStep, stepOrder]);
 
   // Update form state
   const updateFormState = (updates: Partial<EstimatorFormState>) => {
