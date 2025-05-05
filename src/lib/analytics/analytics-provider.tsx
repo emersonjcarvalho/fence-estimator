@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { GA_MEASUREMENT_ID, trackVirtualPageView } from './gtag';
 
@@ -15,7 +15,7 @@ interface AnalyticsProviderProps {
  * Provider component that initializes analytics and tracks route changes
  * This handles virtual page views for SPA navigation
  */
-export function AnalyticsProvider({ children }: AnalyticsProviderProps): JSX.Element {
+export function AnalyticsProvider({ children }: AnalyticsProviderProps): React.ReactElement {
   const pathname = usePathname();
 
   // Track initial page view
